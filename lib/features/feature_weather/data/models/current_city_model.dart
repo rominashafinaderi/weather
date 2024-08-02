@@ -1,4 +1,4 @@
-import 'package:wheather_app/features/feature_bookmark/domain/entites/current_city_entity.dart';
+import 'package:wheather_app/features/feature_weather/domain/entites/current_city_entity.dart';
 
 /// coord : {"lon":10.99,"lat":44.34}
 /// weather : [{"id":501,"main":"Rain","description":"moderate rain","icon":"10d"}]
