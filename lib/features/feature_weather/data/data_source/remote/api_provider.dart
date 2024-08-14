@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:wheather_app/core/params/ForecastParams.dart';
 import 'package:wheather_app/core/utils/constants.dart';
 
 class ApiProvider {
@@ -16,4 +17,20 @@ class ApiProvider {
     print(response.data);
     return response;
   }
+  /// 7 days forecast api
+  Future<dynamic> sendRequest7DaysForcast(ForecastParams params) async {
+
+    var response = await _dio.get(
+        "${Constants.baseUrl}/data/2.5/onecall",
+        queryParameters: {
+          'lat': params.lat,
+          'lon': params.lon,
+          'exclude': 'minutely,hourly',
+          'appid': apiKey,
+          'units': 'metric'
+        });
+
+    return response;
+  }
+
 }
