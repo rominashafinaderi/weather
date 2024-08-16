@@ -17,15 +17,21 @@ class WeatherRepositoryImpl extends WeatherRepository {
   Future<DataState<CurrentcityEntity>> fetchCurrentWeatherData(
       String cityName) async {
     try {
+      print('Attempting to fetch weather data for $cityName');
       Response response = await apiProvider.callCurrentWeather(cityName);
+      print('Response received with status code: ${response.statusCode}');
+
       if (response.statusCode == 200) {
+        print('Success! Parsing data...');
         CurrentcityEntity currentCityEntity =
-            CurrentCityModel.fromJson(response.data);
+        CurrentCityModel.fromJson(response.data);
         return DataSuccess(currentCityEntity);
       } else {
+        print('Failed with status code: ${response.statusCode}');
         return DataFailed('some thing went wrong!.. try again!');
       }
     } catch (e) {
+      print('Error occurred: $e');
       return DataFailed('please check your connection..');
     }
   }

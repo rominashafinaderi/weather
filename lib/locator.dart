@@ -14,5 +14,5 @@ setup(){
   locator.registerSingleton<WeatherRepository >(WeatherRepositoryImpl(locator()));
   //use case
   locator.registerSingleton<GetCurrentWeatherUseCase>(GetCurrentWeatherUseCase(locator()));
-  locator.registerSingleton<HomeBloc>(HomeBloc(locator()));
+   locator.registerSingleton<HomeBloc>(HomeBloc(locator(),locator()));
 }

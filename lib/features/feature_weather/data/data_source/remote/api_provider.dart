@@ -1,22 +1,25 @@
+
 import 'package:dio/dio.dart';
 import 'package:wheather_app/core/params/ForecastParams.dart';
 import 'package:wheather_app/core/utils/constants.dart';
 
-class ApiProvider {
-  Dio _dio = Dio();
+class ApiProvider{
+  final Dio _dio = Dio();
   var apiKey = Constants.apiKey1;
 
-//current weather api call
+  /// current weather api call
   Future<dynamic> callCurrentWeather(cityName) async {
-    var response = await _dio
-        .get('${Constants.baseUrl}/data/2.5/weather', queryParameters: {
-      'q': cityName,
-      'appid': apiKey,
-      'units': 'metric',
-    });
-    print(response.data);
+    var response = await _dio.get(
+        '${Constants.baseUrl}/data/2.5/weather',
+        queryParameters: {
+          'q' : cityName,
+          'appid' : apiKey,
+          'units' : 'metric'
+        }
+    );
     return response;
   }
+
   /// 7 days forecast api
   Future<dynamic> sendRequest7DaysForcast(ForecastParams params) async {
 
@@ -33,4 +36,12 @@ class ApiProvider {
     return response;
   }
 
+  /// city name suggest api
+  Future<dynamic> sendRequestCitySuggestion(String prefix) async {
+    var response = await _dio.get(
+        "http://geodb-free-service.wirefreethought.com/v1/geo/cities",
+        queryParameters: {'limit': 7, 'offset': 0, 'namePrefix': prefix});
+
+    return response;
+  }
 }
