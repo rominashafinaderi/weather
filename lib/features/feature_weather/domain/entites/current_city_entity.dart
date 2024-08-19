@@ -1,7 +1,7 @@
 import 'package:equatable/equatable.dart';
 import 'package:wheather_app/features/feature_weather/data/models/current_city_model.dart';
 
-class CurrentcityEntity extends Equatable {
+class CurrentCityEntity extends Equatable {
   final Coord? coord;
   final List<Weather>? weather;
   final String? base;
@@ -17,7 +17,7 @@ class CurrentcityEntity extends Equatable {
   final String? name;
   final num? cod;
 
-  const CurrentcityEntity(
+  const CurrentCityEntity(
       {this.coord,
       this.weather,
       this.base,

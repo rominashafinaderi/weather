@@ -14,7 +14,7 @@ class ForecastDaysModel extends ForecastDaysEntity{
   ForecastDaysModel({
       double? lat, 
       double? lon, 
-      String? timezone, 
+      String? timezone,
       int? timezoneOffset, 
       Current? current, 
       List<Daily>? daily, 
@@ -47,8 +47,8 @@ class ForecastDaysModel extends ForecastDaysEntity{
     }
 
     return ForecastDaysModel(
-      lat: json['lat'].toDouble(),
-      lon: json['lon'].toDouble(),
+      lat: json['lat'],
+      lon: json['lon'],
       timezone: json['timezone'],
       timezoneOffset: json['timezone_offset'],
       current: json['current'] != null ? Current.fromJson(json['current']) : null,

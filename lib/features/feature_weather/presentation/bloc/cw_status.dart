@@ -7,8 +7,8 @@ abstract class CwStatus{
  }
  class CwLoading extends CwStatus{}
  class CwCompleted extends CwStatus{
-  final CurrentcityEntity currentcityEntity;
-  CwCompleted(this.currentcityEntity);
+  final CurrentCityEntity currentCityEntity;
+  CwCompleted(this.currentCityEntity);
  }
  class CwError extends CwStatus{
   final String message;

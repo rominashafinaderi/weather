@@ -15,7 +15,7 @@ import 'package:wheather_app/features/feature_weather/domain/entites/current_cit
 /// name : "Zocca"
 /// cod : 200
 
-class CurrentCityModel extends CurrentcityEntity {
+class CurrentCityModel extends CurrentCityEntity {
   CurrentCityModel({
     Coord? coord,
     List<Weather>? weather,
@@ -288,8 +288,8 @@ class Coord {
     lat = json['lat'];
   }
 
-  num? lon;
-  num? lat;
+  double? lon;
+  double? lat;
 
   Map<String, dynamic> toJson() {
     final map = <String, dynamic>{};

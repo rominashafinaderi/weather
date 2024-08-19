@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:wheather_app/core/utils/date_converter.dart';
 import 'package:wheather_app/core/widgets/app_background.dart';
+import 'package:wheather_app/features/feature_weather/data/models/for_cast_city_model.dart';
 
 class DaysWeatherView extends StatefulWidget {
   final Daily daily;
