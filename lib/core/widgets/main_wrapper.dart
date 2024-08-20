@@ -20,19 +20,19 @@ class MainWrapper extends StatelessWidget {
       create: (_) => locator<HomeBloc>(),
       child: Scaffold(
         extendBody: true, //safhe bre zire bottom nav
-        bottomNavigationBar: BottomNav(Controller: pageController),
+       // bottomNavigationBar: SizedBox(height:40,child: BottomNav(Controller: pageController)),
         body: Container(
           height: height,
           decoration: BoxDecoration(
               image: DecorationImage(
                   image: AppBackground.getBackGroundImage(),
                   fit: BoxFit.cover)),
-          child:
-
-          PageView(
-            controller: pageController,
-            children: pageViewWidget,
-          ),
+          child:HomeScreen()
+          //
+          // PageView(
+          //   controller: pageController,
+          //   children: pageViewWidget,
+          // ),
         ),
       ),
     );

@@ -15,7 +15,7 @@ class BottomNav extends StatelessWidget {
       notchMargin: 5,
       color: primaryColor,
       child: SizedBox(
-        height: 63,
+        height: 50,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
