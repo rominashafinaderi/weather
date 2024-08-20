@@ -1,23 +1,23 @@
+
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:meta/meta.dart';
-import 'package:wheather_app/core/params/ForecastParams.dart';
+import 'package:flutter/material.dart';
 import 'package:wheather_app/core/resources/data_state.dart';
 import 'package:wheather_app/features/feature_weather/domain/use_cases/get_current_weather_use_case.dart';
-import 'package:wheather_app/features/feature_weather/domain/use_cases/get_forecast_weather_usecase.dart';
 import 'package:wheather_app/features/feature_weather/presentation/bloc/cw_status.dart';
-import 'package:wheather_app/features/feature_weather/presentation/bloc/fw_status.dart';
+
+import '../../../../core/params/ForecastParams.dart';
+import '../../domain/use_cases/get_forecast_weather_usecase.dart';
+import 'fw_status.dart';
 
 part 'home_event.dart';
-
 part 'home_state.dart';
 
 class HomeBloc extends Bloc<HomeEvent, HomeState> {
   final GetCurrentWeatherUseCase getCurrentWeatherUseCase;
   final GetForecastWeatherUseCase _getForecastWeatherUseCase;
 
-  HomeBloc(this.getCurrentWeatherUseCase, this._getForecastWeatherUseCase) :
-        super(HomeState(cwStatus: CwLoading(), fwStatus: FwLoading())) {
+  HomeBloc(this.getCurrentWeatherUseCase, this._getForecastWeatherUseCase) : super(HomeState(cwStatus: CwLoading(), fwStatus: FwLoading())) {
 
     on<LoadCwEvent>((event, emit) async {
 

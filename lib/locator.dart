@@ -7,18 +7,19 @@ import 'package:wheather_app/features/feature_weather/domain/use_cases/get_forec
 import 'package:wheather_app/features/feature_weather/presentation/bloc/home_bloc.dart';
 
 GetIt locator = GetIt.instance;
-Future<void> setup() async {
-  // provide کردن ApiProvider
+
+setup() async {
   locator.registerSingleton<ApiProvider>(ApiProvider());
 
-  // repository
+
+  /// repositories
   locator.registerSingleton<WeatherRepository>(WeatherRepositoryImpl(locator()));
 
-  // use cases
+  /// use case
   locator.registerSingleton<GetCurrentWeatherUseCase>(GetCurrentWeatherUseCase(locator()));
   locator.registerSingleton<GetForecastWeatherUseCase>(GetForecastWeatherUseCase(locator()));
 
-  // BLoC
-  locator.registerSingleton<HomeBloc>(HomeBloc(locator(), locator()));
-}
 
+
+  locator.registerSingleton<HomeBloc>(HomeBloc(locator(),locator()));
+}

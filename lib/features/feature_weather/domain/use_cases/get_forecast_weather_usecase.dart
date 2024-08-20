@@ -7,6 +7,7 @@ import '../../../../core/resources/data_state.dart';
 
 import '../repository/weather_repository.dart';
 
+
 class GetForecastWeatherUseCase implements UseCase<DataState<ForecastDaysEntity>, ForecastParams>{
   final WeatherRepository _weatherRepository;
   GetForecastWeatherUseCase(this._weatherRepository);

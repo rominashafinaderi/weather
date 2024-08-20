@@ -1,7 +1,8 @@
 
 import 'package:dio/dio.dart';
-import 'package:wheather_app/core/params/ForecastParams.dart';
 import 'package:wheather_app/core/utils/constants.dart';
+
+import '../../../../../core/params/ForecastParams.dart';
 
 class ApiProvider{
   final Dio _dio = Dio();
@@ -24,7 +25,7 @@ class ApiProvider{
   Future<dynamic> sendRequest7DaysForcast(ForecastParams params) async {
 
     var response = await _dio.get(
-        '${Constants.baseUrl}/data/2.5/weather',
+        "${Constants.baseUrl}/data/2.5/onecall",
         queryParameters: {
           'lat': params.lat,
           'lon': params.lon,

@@ -12,24 +12,24 @@ class ForecastDaysEntity extends Equatable{
   final List<Alerts>? alerts;
 
   ForecastDaysEntity({
-      this.lat,
-      this.lon,
-      this.timezone,
-      this.timezoneOffset,
-      this.current,
-      this.daily,
-      this.alerts});
+    this.lat,
+    this.lon,
+    this.timezone,
+    this.timezoneOffset,
+    this.current,
+    this.daily,
+    this.alerts});
 
   @override
   // TODO: implement props
   List<Object?> get props => [
-  lat,
-  lon,
-  timezone,
-  timezoneOffset,
-  current,
-  daily,
-  alerts,
+    lat,
+    lon,
+    timezone,
+    timezoneOffset,
+    current,
+    daily,
+    alerts,
   ];
 
   @override

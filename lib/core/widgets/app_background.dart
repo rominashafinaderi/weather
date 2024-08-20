@@ -1,3 +1,4 @@
+
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -5,7 +6,7 @@ class AppBackground{
 
   static AssetImage getBackGroundImage(){
     DateTime now = DateTime.now();
-    String formattedDate = DateFormat('kk').format(now);// kk barhasb ine ke 19:14 bood aghar saat 19 ro barmigrdoneh
+    String formattedDate = DateFormat('kk').format(now);
     if(6 > int.parse(formattedDate)){
       return AssetImage('assets/images/nightpic.jpg');
     }else if(18 > int.parse(formattedDate)){

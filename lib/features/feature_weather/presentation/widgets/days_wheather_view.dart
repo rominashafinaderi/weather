@@ -1,3 +1,4 @@
+
 import 'package:flutter/material.dart';
 import 'package:wheather_app/core/utils/date_converter.dart';
 import 'package:wheather_app/core/widgets/app_background.dart';
@@ -46,7 +47,6 @@ class _DaysWeatherViewState extends State<DaysWeatherView> with SingleTickerProv
               elevation: 0,
               child: SizedBox(
                 width: 50,
-                height: 50,
                 child: Column(
                   children: [
                     Text(DateConverter.changeDtToDateTime(widget.daily.dt),

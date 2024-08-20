@@ -18,22 +18,23 @@ class MainWrapper extends StatelessWidget {
     var height = MediaQuery.of(context).size.height;
     return BlocProvider(
       create: (_) => locator<HomeBloc>(),
-  child: Scaffold(
-      extendBody: true, //safhe bre zire bottom nav
-      //bottomNavigationBar: BottomNav(Controller: pageController),
-      body: Container(
-        height: height,
-        decoration: BoxDecoration(
-            image: DecorationImage(
-                image: AppBackground.getBackGroundImage(), fit: BoxFit.cover)),
-        child:HomeScreen()
-        // PageView(
-        //   controller: pageController,
-        //   children: pageViewWidget,
-        // ),
+      child: Scaffold(
+        extendBody: true, //safhe bre zire bottom nav
+        bottomNavigationBar: BottomNav(Controller: pageController),
+        body: Container(
+          height: height,
+          decoration: BoxDecoration(
+              image: DecorationImage(
+                  image: AppBackground.getBackGroundImage(),
+                  fit: BoxFit.cover)),
+          child:
+
+          PageView(
+            controller: pageController,
+            children: pageViewWidget,
+          ),
+        ),
       ),
-    ),
-);
+    );
   }
 }
-
