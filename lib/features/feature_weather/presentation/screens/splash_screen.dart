@@ -76,8 +76,14 @@ class _SplashScreenState extends State<SplashScreen>
   }
 
   _navigate() {
-    Navigator.push(context,MaterialPageRoute(builder: (context) => MainWrapper(),));
-  }
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Navigator.pushReplacement<void, void>(
+        context,
+        MaterialPageRoute<void>(
+          builder: (BuildContext context) =>  MainWrapper(),
+        ),
+      );
+    });  }
 
 
   @override

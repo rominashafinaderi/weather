@@ -18,21 +18,28 @@ class MainWrapper extends StatelessWidget {
     var height = MediaQuery.of(context).size.height;
     return BlocProvider(
       create: (_) => locator<HomeBloc>(),
-      child: Scaffold(
-        extendBody: true, //safhe bre zire bottom nav
-       // bottomNavigationBar: SizedBox(height:40,child: BottomNav(Controller: pageController)),
-        body: Container(
-          height: height,
-          decoration: BoxDecoration(
-              image: DecorationImage(
-                  image: AppBackground.getBackGroundImage(),
-                  fit: BoxFit.cover)),
-          child:HomeScreen()
-          //
-          // PageView(
-          //   controller: pageController,
-          //   children: pageViewWidget,
-          // ),
+      child: WillPopScope(
+        onWillPop: ()async{
+              Navigator.pop(context);
+              Navigator.pop(context);
+              return true;
+        },
+        child: Scaffold(
+          extendBody: true, //safhe bre zire bottom nav
+         // bottomNavigationBar: SizedBox(height:40,child: BottomNav(Controller: pageController)),
+          body: Container(
+            height: height,
+            decoration: BoxDecoration(
+                image: DecorationImage(
+                    image: AppBackground.getBackGroundImage(),
+                    fit: BoxFit.cover)),
+            child:HomeScreen()
+            //
+            // PageView(
+            //   controller: pageController,
+            //   children: pageViewWidget,
+            // ),
+          ),
         ),
       ),
     );
