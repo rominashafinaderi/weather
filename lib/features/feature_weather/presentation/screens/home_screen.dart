@@ -72,7 +72,7 @@ class _HomeScreenState extends State<HomeScreen> with AutomaticKeepAliveClientMi
                   builder: (context, state){
 
                     if(state.cwStatus is CwLoading){
-                      return const Expanded(child: DotLoadingWidget(size: 50,));
+                      return  Expanded(child: DotLoadingWidget(size: 45,));
                     }
 
                     if(state.cwStatus is CwCompleted){
@@ -210,7 +210,7 @@ class _HomeScreenState extends State<HomeScreen> with AutomaticKeepAliveClientMi
 
                                           /// show Loading State for Fw
                                           if (state.fwStatus is FwLoading) {
-                                            return const DotLoadingWidget(size: 20,);
+                                            return  DotLoadingWidget(size: 20,);
                                           }
 
                                           /// show Completed State for Fw
@@ -380,6 +380,7 @@ class _HomeScreenState extends State<HomeScreen> with AutomaticKeepAliveClientMi
                 child: Padding(
                   padding: EdgeInsets.only(right: width * 0.03,left:  width * 0.03,top:  height * 0.02),
                   child: TypeAheadField(
+                    loadingBuilder:(context)=> DotLoadingWidget(size: 20,) ,
                       textFieldConfiguration: TextFieldConfiguration(
                         onSubmitted: (String prefix) {
                           textEditingController.text = prefix;

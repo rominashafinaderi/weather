@@ -128,8 +128,9 @@ class _SplashScreenState extends State<SplashScreen>
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
+                    SizedBox(height: 10,),
                     DotLoadingWidget(size: 60,),
-                    SizedBox(height: 20,),
+                    SizedBox(height: 30,),
                     Text(
                       '!...درحال بارگذاری',
                       style: TextStyle(color: Colors.white),
