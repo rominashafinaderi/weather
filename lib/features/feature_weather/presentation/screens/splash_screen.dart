@@ -25,8 +25,7 @@ class _SplashScreenState extends State<SplashScreen>
   late AnimationController _animationController;
   bool isConnected = true;
 
-  Color gradientLightColor = Colors.white;
-  Color gradientDarkColor = Colors.white;
+
   late final StreamSubscription<InternetStatus> listener;
 
   @override
@@ -88,36 +87,19 @@ class _SplashScreenState extends State<SplashScreen>
 
   @override
   Widget build(BuildContext context) {
-    return AnnotatedRegion<SystemUiOverlayStyle>(
-      value: SystemUiOverlayStyle(
-        statusBarColor: Colors.black,
-        statusBarBrightness: Brightness.light,
-        statusBarIconBrightness: Brightness.light,
-        systemNavigationBarColor: Colors.black,
-        systemNavigationBarDividerColor: Colors.black,
-        systemNavigationBarIconBrightness: Brightness.light,
-        systemStatusBarContrastEnforced: false,
+    return Container(
+      width: double.infinity,
+      height: double.infinity,
+    
+      decoration: BoxDecoration(
+          image: DecorationImage(
+              image: AppBackground.getBackGroundImage(), fit: BoxFit.cover),
       ),
-      child: Container(
-        width: double.infinity,
-        height: double.infinity,
-
-        decoration: BoxDecoration(
-            image: DecorationImage(
-                image: AppBackground.getBackGroundImage(), fit: BoxFit.cover),
-
-          gradient: LinearGradient(
-
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            stops: [0.35, 1],
-            colors: [gradientLightColor, gradientDarkColor],
-          ),
-        ),
-        child: Scaffold(
-          resizeToAvoidBottomInset: false,
-          backgroundColor: Colors.transparent,
-          body: Center(
+      child: Scaffold(
+        resizeToAvoidBottomInset: false,
+        backgroundColor: Colors.transparent,
+        body: SafeArea(
+          child: Center(
             child: Column(children: [
               SizedBox(
                 height: (MediaQuery.of(context).size.height * 0.4),
@@ -133,14 +115,14 @@ class _SplashScreenState extends State<SplashScreen>
                     SizedBox(height: 30,),
                     Text(
                       '!...درحال بارگذاری',
-                      style: TextStyle(color: Colors.white),
+                      style: TextStyle(color: Colors.white,fontFamily: 'AsliMedium',fontSize: 19),
                     )
                   ],
                 )
               ] else ...[
                 Text(
                   '!...از اتصال اینترنت خود مطمعن شوید',
-                  style: TextStyle(color: Colors.white),
+                  style: TextStyle(color: Colors.white,fontFamily: 'AsliMedium',fontSize: 19),
                 )
               ],
               SizedBox(
