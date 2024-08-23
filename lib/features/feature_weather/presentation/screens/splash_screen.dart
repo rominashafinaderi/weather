@@ -1,3 +1,4 @@
+
 import 'dart:async';
 import 'dart:math' as math;
 
@@ -90,10 +91,10 @@ class _SplashScreenState extends State<SplashScreen>
     return Container(
       width: double.infinity,
       height: double.infinity,
-    
+
       decoration: BoxDecoration(
-          image: DecorationImage(
-              image: AppBackground.getBackGroundImage(), fit: BoxFit.cover),
+        image: DecorationImage(
+            image: AppBackground.getBackGroundImage(), fit: BoxFit.cover),
       ),
       child: Scaffold(
         resizeToAvoidBottomInset: false,

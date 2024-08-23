@@ -11,11 +11,15 @@ void main() async {
 
   runApp(MaterialApp(
     debugShowCheckedModeBanner: false,
+      theme: ThemeData(
+        textSelectionTheme: TextSelectionThemeData(
+          selectionHandleColor: Colors.grey, // اینجا رنگ مورد نظرتان را وارد کنید
+        ),),
     home: MultiBlocProvider(
       providers: [
         BlocProvider(create: (_) => locator<HomeBloc>()),
       ],
-      child: SplashScreen(),
+      child: MainWrapper(),
     ),
   ));
 }

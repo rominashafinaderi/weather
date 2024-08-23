@@ -1,12 +1,14 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
+import 'package:internet_connection_checker_plus/internet_connection_checker_plus.dart';
 import 'package:wheather_app/core/params/ForecastParams.dart';
 import 'package:wheather_app/core/utils/date_converter.dart';
 import 'package:wheather_app/core/widgets/app_background.dart';
 import 'package:wheather_app/core/widgets/dot_loading_widget.dart';
 import 'package:wheather_app/features/feature_weather/data/models/for_cast_city_model.dart';
-import 'package:wheather_app/features/feature_weather/data/models/suggest_city_model.dart';
 import 'package:wheather_app/features/feature_weather/domain/entites/current_city_entity.dart';
 import 'package:wheather_app/features/feature_weather/domain/entites/forecase_days_entity.dart';
 import 'package:wheather_app/features/feature_weather/domain/use_cases/get_suggestion_city_usecase.dart';
@@ -24,20 +26,48 @@ class HomeScreen extends StatefulWidget {
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> with AutomaticKeepAliveClientMixin {
+class _HomeScreenState extends State<HomeScreen>
+    with AutomaticKeepAliveClientMixin {
   TextEditingController textEditingController = TextEditingController();
+  bool isConnected = true;
 
-  GetSuggestionCityUseCase getSuggestionCityUseCase = GetSuggestionCityUseCase(locator());
+  late final StreamSubscription<InternetStatus> listener;
+
+  GetSuggestionCityUseCase getSuggestionCityUseCase =
+      GetSuggestionCityUseCase(locator());
 
   String cityName = "Tehran";
   final PageController _pageController = PageController();
+  final textColor =
+      AppBackground.isDayTime() ? Colors.grey.shade800.withOpacity(0.85) : Colors.white;
+  final divider =
+      AppBackground.isDayTime() ? Colors.grey.shade800 : Colors.white;
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-
+    _checkNetworkConnection();
     BlocProvider.of<HomeBloc>(context).add(LoadCwEvent(cityName));
+  }
+
+  void _checkNetworkConnection() {
+    listener = InternetConnection()
+        .onStatusChange
+        .listen((InternetStatus status) async {
+      switch (status) {
+        case InternetStatus.connected:
+          setState(() {
+            isConnected = true;
+          });
+          break;
+        case InternetStatus.disconnected:
+          setState(() {
+            isConnected = false;
+          });
+          break;
+      }
+    });
   }
 
   @override
@@ -67,28 +97,62 @@ class _HomeScreenState extends State<HomeScreen> with AutomaticKeepAliveClientMi
               builder: (context, state) {
                 if (state.cwStatus is CwLoading) {
                   return Expanded(
-                      child: DotLoadingWidget(
-                    size: 45,
-                  ));
+                     child:  Center(
+                        child: Column(children: [
+                          SizedBox(
+                            height: (MediaQuery.of(context).size.height * 0.3),
+                          ),
+                          SizedBox(height: 80),
+                          if (isConnected) ...[
+                            Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                SizedBox(height: 10,),
+                                DotLoadingWidget(size: 60,color: textColor,),
+                                SizedBox(height: 30,),
+                                Text(
+                                  '!...درحال بارگذاری',
+                                  style: TextStyle(color: textColor,fontFamily: 'AsliMedium',fontSize: 19),
+                                )
+                              ],
+                            )
+                          ] else ...[
+                            Text(
+                              '!...از اتصال اینترنت خود مطمعن شوید',
+                              style: TextStyle(color: textColor,fontFamily: 'AsliMedium',fontSize: 19),
+                            )
+                          ],
+                          SizedBox(
+                            height: (MediaQuery.of(context).size.height * 0.2),
+                          ),
+                        ]),
+                     )
+                      );
                 }
 
                 if (state.cwStatus is CwCompleted) {
                   /// cast
                   final CwCompleted cwCompleted = state.cwStatus as CwCompleted;
-                  final CurrentCityEntity currentCityEntity = cwCompleted.currentCityEntity;
+                  final CurrentCityEntity currentCityEntity =
+                      cwCompleted.currentCityEntity;
 
                   /// create params for api call
-                  final ForecastParams forecastParams =
-                      ForecastParams(currentCityEntity.coord!.lat!, currentCityEntity.coord!.lon!);
+                  final ForecastParams forecastParams = ForecastParams(
+                      currentCityEntity.coord!.lat!,
+                      currentCityEntity.coord!.lon!);
 
                   /// start load Fw event
-                  BlocProvider.of<HomeBloc>(context).add(LoadFwEvent(forecastParams));
+                  BlocProvider.of<HomeBloc>(context)
+                      .add(LoadFwEvent(forecastParams));
 
                   /// change Times to Hour --5:55 AM/PM----
-                  final sunrise =
-                      DateConverter.changeDtToDateTimeHour(currentCityEntity.sys!.sunrise, currentCityEntity.timezone);
-                  final sunset =
-                      DateConverter.changeDtToDateTimeHour(currentCityEntity.sys!.sunset, currentCityEntity.timezone);
+                  final sunrise = DateConverter.changeDtToDateTimeHour(
+                      currentCityEntity.sys!.sunrise,
+                      currentCityEntity.timezone);
+                  final sunset = DateConverter.changeDtToDateTimeHour(
+                      currentCityEntity.sys!.sunset,
+                      currentCityEntity.timezone);
 
                   return Expanded(
                       child: ListView(
@@ -97,32 +161,36 @@ class _HomeScreenState extends State<HomeScreen> with AutomaticKeepAliveClientMi
                         padding: EdgeInsets.only(top: height * 0.02),
                         child: SizedBox(
                           width: width,
-                          height: 500,
+                          height: 470,
                           child: Column(
                             children: [
                               Padding(
                                 padding: const EdgeInsets.only(top: 50),
                                 child: Text(
                                   currentCityEntity.name!,
-                                  style: const TextStyle(fontSize: 30, color: Colors.white),
+                                  style:
+                                      TextStyle(fontSize: 30, color: textColor),
                                 ),
                               ),
                               Padding(
                                 padding: const EdgeInsets.only(top: 20),
                                 child: Text(
                                   currentCityEntity.weather![0].description!,
-                                  style: const TextStyle(fontSize: 20, color: Colors.grey),
+                                  style: const TextStyle(
+                                      fontSize: 20, color: Colors.blueGrey),
                                 ),
                               ),
                               Padding(
                                 padding: const EdgeInsets.only(top: 20),
-                                child: AppBackground.setIconForMain(currentCityEntity.weather![0].description!),
+                                child: AppBackground.setIconForMain(
+                                    currentCityEntity.weather![0].description!),
                               ),
                               Padding(
                                 padding: const EdgeInsets.only(top: 20),
                                 child: Text(
                                   "${currentCityEntity.main!.temp!.round()}\u00B0",
-                                  style: const TextStyle(fontSize: 50, color: Colors.white),
+                                  style:
+                                      TextStyle(fontSize: 50, color: textColor),
                                 ),
                               ),
                               const SizedBox(
@@ -138,7 +206,7 @@ class _HomeScreenState extends State<HomeScreen> with AutomaticKeepAliveClientMi
                                         "max",
                                         style: TextStyle(
                                           fontSize: 16,
-                                          color: Colors.grey,
+                                          color: Colors.blueGrey,
                                         ),
                                       ),
                                       const SizedBox(
@@ -146,9 +214,9 @@ class _HomeScreenState extends State<HomeScreen> with AutomaticKeepAliveClientMi
                                       ),
                                       Text(
                                         "${currentCityEntity.main!.tempMax!.round()}\u00B0",
-                                        style: const TextStyle(
+                                        style: TextStyle(
                                           fontSize: 16,
-                                          color: Colors.white,
+                                          color: textColor,
                                         ),
                                       )
                                     ],
@@ -161,7 +229,7 @@ class _HomeScreenState extends State<HomeScreen> with AutomaticKeepAliveClientMi
                                       right: 10,
                                     ),
                                     child: Container(
-                                      color: Colors.grey,
+                                      color: Colors.blueGrey,
                                       width: 2,
                                       height: 40,
                                     ),
@@ -174,7 +242,7 @@ class _HomeScreenState extends State<HomeScreen> with AutomaticKeepAliveClientMi
                                         "min",
                                         style: TextStyle(
                                           fontSize: 16,
-                                          color: Colors.grey,
+                                          color: Colors.blueGrey,
                                         ),
                                       ),
                                       const SizedBox(
@@ -182,9 +250,9 @@ class _HomeScreenState extends State<HomeScreen> with AutomaticKeepAliveClientMi
                                       ),
                                       Text(
                                         "${currentCityEntity.main!.tempMin!.round()}\u00B0",
-                                        style: const TextStyle(
+                                        style: TextStyle(
                                           fontSize: 16,
-                                          color: Colors.white,
+                                          color: textColor,
                                         ),
                                       )
                                     ],
@@ -198,9 +266,10 @@ class _HomeScreenState extends State<HomeScreen> with AutomaticKeepAliveClientMi
 
                       /// divider
                       Padding(
-                        padding: const EdgeInsets.only(top: 10, right: 30, left: 30, bottom: 20),
+                        padding: const EdgeInsets.only(
+                            top: 10, right: 30, left: 30, bottom: 20),
                         child: Container(
-                          color: Colors.white24,
+                          color: Colors.blueGrey,
                           height: 2,
                           width: double.infinity,
                         ),
@@ -221,15 +290,20 @@ class _HomeScreenState extends State<HomeScreen> with AutomaticKeepAliveClientMi
                                   if (state.fwStatus is FwLoading) {
                                     return DotLoadingWidget(
                                       size: 20,
+                                      color: textColor,
                                     );
                                   }
 
                                   /// show Completed State for Fw
                                   if (state.fwStatus is FwCompleted) {
                                     /// casting
-                                    final FwCompleted fwCompleted = state.fwStatus as FwCompleted;
-                                    final ForecastDaysEntity forecastDaysEntity = fwCompleted.forecastDaysEntity;
-                                    final List<Daily> mainDaily = forecastDaysEntity.daily!;
+                                    final FwCompleted fwCompleted =
+                                        state.fwStatus as FwCompleted;
+                                    final ForecastDaysEntity
+                                        forecastDaysEntity =
+                                        fwCompleted.forecastDaysEntity;
+                                    final List<Daily> mainDaily =
+                                        forecastDaysEntity.daily!;
 
                                     return ListView.builder(
                                       shrinkWrap: true,
@@ -248,11 +322,15 @@ class _HomeScreenState extends State<HomeScreen> with AutomaticKeepAliveClientMi
 
                                   /// show Error State for Fw
                                   if (state.fwStatus is FwError) {
-                                    final FwError fwError = state.fwStatus as FwError;
+                                    final FwError fwError =
+                                        state.fwStatus as FwError;
                                     return Center(
                                       child: Text(
                                         ' بارگذاری نشد${currentCityEntity.name!}آب و هوای مربوط به 7 روز آینده شهر ',
-                                        style: TextStyle(color: Colors.white, fontFamily: 'AsliMedium', fontSize: 11.5),
+                                        style: TextStyle(
+                                            color: textColor,
+                                            fontFamily: 'AsliMedium',
+                                            fontSize: 11.5),
                                       ),
                                     );
                                   }
@@ -268,9 +346,10 @@ class _HomeScreenState extends State<HomeScreen> with AutomaticKeepAliveClientMi
 
                       /// divider
                       Padding(
-                        padding: const EdgeInsets.only(top: 20, right: 30, left: 30, bottom: 20),
+                        padding: const EdgeInsets.only(
+                            top: 20, right: 30, left: 30, bottom: 20),
                         child: Container(
-                          color: Colors.white24,
+                          color: Colors.blueGrey,
                           height: 2,
                           width: double.infinity,
                         ),
@@ -330,7 +409,7 @@ class _HomeScreenState extends State<HomeScreen> with AutomaticKeepAliveClientMi
                                     sunrise,
                                     style: TextStyle(
                                       fontSize: height * 0.016,
-                                      color: Colors.white,
+                                      color:  Colors.white,
                                     ),
                                   ),
                                 ),
@@ -362,7 +441,7 @@ class _HomeScreenState extends State<HomeScreen> with AutomaticKeepAliveClientMi
                                     sunset,
                                     style: TextStyle(
                                       fontSize: height * 0.016,
-                                      color: Colors.white,
+                                      color:  Colors.white,
                                     ),
                                   ),
                                 ),
@@ -394,7 +473,7 @@ class _HomeScreenState extends State<HomeScreen> with AutomaticKeepAliveClientMi
                                     "${currentCityEntity.main!.humidity!}%",
                                     style: TextStyle(
                                       fontSize: height * 0.016,
-                                      color: Colors.white,
+                                      color:  Colors.white,
                                     ),
                                   ),
                                 ),
@@ -412,10 +491,13 @@ class _HomeScreenState extends State<HomeScreen> with AutomaticKeepAliveClientMi
                 }
 
                 if (state.cwStatus is CwError) {
-                  return const Center(
+                  return Center(
                       child: Text(
                     'آب و هوای مربوط به شهر مورد نظر یافت نشد',
-                    style: TextStyle(color: Colors.white, fontFamily: 'AsliMedium', fontSize: 13),
+                    style: TextStyle(
+                        color: textColor,
+                        fontFamily: 'AsliMedium',
+                        fontSize: 13),
                   ));
                 }
 
@@ -425,51 +507,67 @@ class _HomeScreenState extends State<HomeScreen> with AutomaticKeepAliveClientMi
           ],
         ),
         SingleChildScrollView(
-          child: Container(
-            decoration: BoxDecoration(color: Colors.transparent),
-            child: Padding(
-              padding: EdgeInsets.only(right: width * 0.03, left: width * 0.03, top: height * 0.02),
-              child: TypeAheadField(
-                  loadingBuilder: (context) => DotLoadingWidget(
-                        size: 30,
-                        color: Colors.black,
-                      ),
-                  textFieldConfiguration: TextFieldConfiguration(
-                    onSubmitted: (String prefix) {
-                      textEditingController.text = prefix;
-                      BlocProvider.of<HomeBloc>(context).add(LoadCwEvent(prefix));
-                    },
-                    controller: textEditingController,
-                    style: DefaultTextStyle.of(context).style.copyWith(
-                          fontSize: 20,
-                          color: Colors.white,
-                        ),
-                    decoration: const InputDecoration(
-                      contentPadding: EdgeInsets.fromLTRB(20, 0, 0, 0),
-                      hintText: "Enter a City...",
-                      hintStyle: TextStyle(color: Colors.white),
-                      focusedBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.white),
-                      ),
-                      enabledBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.white),
-                      ),
-                    ),
+          child: Padding(
+            padding: EdgeInsets.only(
+              right: width * 0.03,
+              left: width * 0.03,
+              top: height * 0.02,
+            ),
+            child: TypeAheadField(
+              loadingBuilder: (context) => DotLoadingWidget(
+                size: 30,
+                color: Colors.black,
+              ),
+              textFieldConfiguration: TextFieldConfiguration(
+                enabled: isConnected,
+                onSubmitted: (String prefix) {
+                  textEditingController.text = prefix;
+                  BlocProvider.of<HomeBloc>(context).add(LoadCwEvent(prefix));
+                },
+                controller: textEditingController,
+                style: DefaultTextStyle.of(context).style.copyWith(
+                  fontSize: 20,
+                  color: textColor,
+                ),
+                cursorColor: Colors.grey,
+                cursorRadius: const Radius.circular(5.0),
+                decoration: InputDecoration(
+                  contentPadding: EdgeInsets.fromLTRB(20, 0, 0, 0),
+                  hintText: isConnected
+                      ? "Enter a City..."
+                      : "No internet connection",
+                  hintStyle: TextStyle(
+                    color: textColor,
                   ),
-                  suggestionsCallback: (String prefix) {
-                    return getSuggestionCityUseCase(prefix);
-                  },
-                  itemBuilder: (context, Data model) {
-                    return ListTile(
-                      leading: const Icon(Icons.location_on),
-                      title: Text(model.name!),
-                      subtitle: Text("${model.region!}, ${model.country!}"),
-                    );
-                  },
-                  onSuggestionSelected: (Data model) {
-                    textEditingController.text = model.name!;
-                    BlocProvider.of<HomeBloc>(context).add(LoadCwEvent(model.name!));
-                  }),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: textColor),
+                  ),
+                  disabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: textColor),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: textColor),
+                  ),
+                ),
+              ),
+              suggestionsCallback: (String prefix) {
+                if (isConnected) {
+                  return getSuggestionCityUseCase(prefix);
+                }
+                return [];
+              },
+              itemBuilder: (context, dynamic model) {
+                return ListTile(
+                  leading: const Icon(Icons.location_on),
+                  title: Text(model.name!),
+                  subtitle: Text("${model.region!}, ${model.country!}"),
+                );
+              },
+              onSuggestionSelected: (dynamic model) {
+                textEditingController.text = model.name!;
+                BlocProvider.of<HomeBloc>(context)
+                    .add(LoadCwEvent(model.name!));
+              },
             ),
           ),
         ),
