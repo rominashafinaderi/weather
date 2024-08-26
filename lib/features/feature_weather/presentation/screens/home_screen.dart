@@ -45,7 +45,6 @@ class _HomeScreenState extends State<HomeScreen>
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     _checkNetworkConnection();
     BlocProvider.of<HomeBloc>(context).add(LoadCwEvent(cityName));
@@ -486,6 +485,7 @@ class _HomeScreenState extends State<HomeScreen>
                       SizedBox(
                         height: 30,
                       ),
+
                     ],
                   ));
                 }
@@ -506,68 +506,76 @@ class _HomeScreenState extends State<HomeScreen>
             ),
           ],
         ),
-        SingleChildScrollView(
-          child: Padding(
-            padding: EdgeInsets.only(
-              right: width * 0.03,
-              left: width * 0.03,
-              top: height * 0.02,
-            ),
-            child: TypeAheadField(
-              loadingBuilder: (context) => DotLoadingWidget(
-                size: 30,
-                color: Colors.black,
+        Positioned(
+          //padding: EdgeInsets.only(
+            right: width * 0.03,
+            left: width * 0.03,
+            top: height * 0.02,
+          //),
+          child: SingleChildScrollView(
+            child: Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(5),
+                color: Colors.blue.shade50,
+
               ),
-              textFieldConfiguration: TextFieldConfiguration(
-                enabled: isConnected,
-                onSubmitted: (String prefix) {
-                  textEditingController.text = prefix;
-                  BlocProvider.of<HomeBloc>(context).add(LoadCwEvent(prefix));
-                },
-                controller: textEditingController,
-                style: DefaultTextStyle.of(context).style.copyWith(
-                  fontSize: 20,
-                  color: textColor,
+
+              child: TypeAheadField(
+                loadingBuilder: (context) => DotLoadingWidget(
+                  size: 30,
+                  color: Colors.black,
                 ),
-                cursorColor: Colors.grey,
-                cursorRadius: const Radius.circular(5.0),
-                decoration: InputDecoration(
-                  contentPadding: EdgeInsets.fromLTRB(20, 0, 0, 0),
-                  hintText: isConnected
-                      ? "Enter a City..."
-                      : "No internet connection",
-                  hintStyle: TextStyle(
+                textFieldConfiguration: TextFieldConfiguration(
+                  enabled: isConnected,
+                  onSubmitted: (String prefix) {
+                    textEditingController.text = prefix;
+                    BlocProvider.of<HomeBloc>(context).add(LoadCwEvent(prefix));
+                  },
+                  controller: textEditingController,
+                  style: DefaultTextStyle.of(context).style.copyWith(
+                    fontSize: 20,
                     color: textColor,
                   ),
-                  focusedBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: textColor),
-                  ),
-                  disabledBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: textColor),
-                  ),
-                  enabledBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: textColor),
+                  cursorColor: Colors.grey,
+                  cursorRadius: const Radius.circular(5.0),
+                  decoration: InputDecoration(
+                    contentPadding: EdgeInsets.fromLTRB(20, 0, 0, 0),
+                    hintText: isConnected
+                        ? "Enter a City..."
+                        : "No internet connection",
+                    hintStyle: TextStyle(
+                      color: textColor,
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: textColor),
+                    ),
+                    disabledBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: textColor),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: textColor),
+                    ),
                   ),
                 ),
+                suggestionsCallback: (String prefix) {
+                  if (isConnected) {
+                    return getSuggestionCityUseCase(prefix);
+                  }
+                  return [];
+                },
+                itemBuilder: (context, dynamic model) {
+                  return ListTile(
+                    leading: const Icon(Icons.location_on),
+                    title: Text(model.name!),
+                    subtitle: Text("${model.region!}, ${model.country!}"),
+                  );
+                },
+                onSuggestionSelected: (dynamic model) {
+                  textEditingController.text = model.name!;
+                  BlocProvider.of<HomeBloc>(context)
+                      .add(LoadCwEvent(model.name!));
+                },
               ),
-              suggestionsCallback: (String prefix) {
-                if (isConnected) {
-                  return getSuggestionCityUseCase(prefix);
-                }
-                return [];
-              },
-              itemBuilder: (context, dynamic model) {
-                return ListTile(
-                  leading: const Icon(Icons.location_on),
-                  title: Text(model.name!),
-                  subtitle: Text("${model.region!}, ${model.country!}"),
-                );
-              },
-              onSuggestionSelected: (dynamic model) {
-                textEditingController.text = model.name!;
-                BlocProvider.of<HomeBloc>(context)
-                    .add(LoadCwEvent(model.name!));
-              },
             ),
           ),
         ),
